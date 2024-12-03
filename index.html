@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Operation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+  
+  body {
+        font-family: 'Montserrat', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f3f4f6;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    form {
+        padding: 20px 30px;
+        background-color: #ffffff;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .inputs-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .input-pair {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .input-pair label {
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #555;
+        font-size: 14px;
+    }
+
+    .input-pair input {
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .input-pair input:focus {
+        border-color: #3c9fac;
+        outline: none;
+        box-shadow: 0 0 5px rgba(60, 159, 172, 0.5);
+    }
+
+    .btn {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .btn button {
+        padding: 12px 25px;
+        font-size: 16px;
+        font-weight: 600;
+        background-color: #3c9fac;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn button:hover {
+        background-color: #307586;
+    }
+
+    .table-container {
+        margin: 20px;
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        margin-top: 20px;
+        background-color: #ffffff;
+    }
+
+    th, td {
+        padding: 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    th {
+        background-color: #3c9fac;
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .action-buttons button {
+        padding: 8px 10px;
+        font-size: 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .action-buttons button i {
+        margin-right: 5px;
+    }
+
+    .action-buttons button:first-child {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .action-buttons button:first-child:hover {
+        background-color: #218838;
+    }
+
+    .action-buttons button:last-child {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .action-buttons button:last-child:hover {
+        background-color: #c82333;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="dataForm" onsubmit="store(event);">
+            <div class="inputs-container">
+                <div class="input-pair">
+                    <label for="age">Age:</label>
+                    <input  type="text" id="age" name="age" required  pattern="^\d+$" title="Age must only contain numbers">
+   
+
+                </div>
+                <div class="input-pair pair-1">
+                    <label for="position">Position:</label>
+                    <input type="text" id="position" name="position" required   pattern="^[a-zA-Z\s]+$" >
+                        
+                </div>
+                <div class="input-pair">
+                    <label for="email">Email:</label>
+                    <input    type="email" id="email" name="email"  required>
+                 </div>
+            </div>
+            <div class="btn">
+                <button type="submit" id="Create">Create</button>
+            </div>
+        </form>
+        <div id="dataDisplay"></div>
+    </div>
+
+    <script>
+        let data = [];
+        let id = 1;
+
+        function store(event) {
+            event.preventDefault();
+
+            const form = document.getElementById("dataForm");
+            if (!form.checkValidity()) {
+                form.reportValidity(); 
+                return;
+            }
+
+            const age = document.getElementById("age").value;
+            const position = document.getElementById("position").value;
+            const email = document.getElementById("email").value;
+
+            data.push({
+                id: id++,
+                age: age,
+                position: position,
+                email: email
+            });
+
+            display();
+            clearForm();
+        }
+
+        function display() {
+            const display = document.getElementById("dataDisplay");
+            display.innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Age</th>
+                                <th>Position</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(val => `
+                                <tr>
+                                    <td>${val.id}</td>
+                                    <td>${val.age}</td>
+                                    <td>${val.position}</td>
+                                    <td>${val.email}</td>
+                                    <td class="action-buttons">
+                                        <button onclick="editRecord(${val.id})">  <i class="fas fa-edit"></i> </i></button>
+                                        <button onclick="deleteRecord(${val.id})"> <i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>`;
+        }
+
+        function clearForm() {
+            document.getElementById("dataForm").reset();
+        }
+
+        function deleteRecord(id) {
+            data = data.filter(val => val.id !== id);
+            display();
+        }
+
+        function editRecord(id) {
+            const record = data.find(val => val.id === id);
+
+            if (record) {
+                document.getElementById("age").value = record.age;
+                document.getElementById("position").value = record.position;
+                document.getElementById("email").value = record.email;
+
+                const createBtn = document.getElementById("Create");
+                createBtn.textContent = "Save";
+                createBtn.onclick = function () {
+                    record.age = document.getElementById("age").value;
+                    record.position = document.getElementById("position").value;
+                    record.email = document.getElementById("email").value;
+
+                    display();
+                    clearForm();
+
+                    createBtn.textContent = "Create";
+                    createBtn.onclick = store;
+                };
+            }
+        }
+    </script>
+</body>
+</html>
